@@ -20,3 +20,14 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.page-title img {
+    max-height: 8em;
+    max-width: 10em;
+    vertical-align: middle;
+}
+.page-title h1 {
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
