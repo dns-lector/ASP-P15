@@ -41,9 +41,16 @@ namespace ASP_P15.Controllers
         {
             return View();
         }
+
         public IActionResult Ioc()
         {
             ViewData["hash"] = _hashService.Digest("123");
+            ViewData["hashCode"] = _hashService.GetHashCode();
+            return View();
+        }
+
+        public IActionResult SignUp()
+        {
             return View();
         }
 

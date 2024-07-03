@@ -1,4 +1,5 @@
 using ASP_P15.Services.Hash;
+using ASP_P15.Services.Kdf;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddControllersWithViews();
  */
 // builder.Services.AddSingleton<IHashService, Md5HashService>();
 builder.Services.AddSingleton<IHashService, ShaHashService>();
+builder.Services.AddSingleton<IKdfService, Pbkdf1Service>();
 
 var app = builder.Build();
 
