@@ -43,3 +43,50 @@ ASP формує ім'я для контролера з'єднуючи "Home" т
 у місце, в якому знаходиться команда 
    @RenderBody()
 
+--------------------------------------------------------------------------
+
+HTTP HyperText Transfer Protocol
+
+Request / Response
+
+Request:
+
+PUT /Home/Index HTTP/1.1            \r\n		| method: GET,POST,PUT,PATCH,DELETE,  HEAD,OPTIONS,TRACE,
+Host: mysite.com					\r\n		| Заголовки по схемі
+Connection: close					\r\n		| ключ: значення; атрибути
+Accept: text/html; charset=utf-8	\r\n		| 
+									\r\n		| кінець заголовків - порожній рядок
+{"user":"239467923", "new-name":"Petrovich"}	| тіло - до кінця пакету (опціонально). Тіло заборонене для GET та HEAD
+
+
+Response:
+
+HTTP/1.1  202  Accepted							| 202 - статус-код
+Connection: close								| Accepted - Reason Phrase
+Content-Type: application/json					| 
+												| 
+{"server-time": 1876972345}						| 
+
+
+
+HTML Forms
+методи: GET та POST
+спосіб кодування даних (enctype)
+
+ x-www-form-urlencoded: (за замовчанням)
+    ключ=значення&ключ2=значення2&...
+	дозволяється як GET, так і POST. У запитах GET закодовані дані
+	додаються до URL після "?", у випадку POST - у тіло
+
+
+ multipart/form-data: тільки POST, дозволяє передачу файлів
+    Content-Type: text/plain
+	Content-Disposition: form-field; name=ключ1
+
+	значення1
+	--delimiter------------------
+	Content-Type: image/jpeg
+	Content-Disposition: form-file; name=file1.jpg
+
+	JPEG11980hvuanw98y3w3urh;kjnavp9792t4rb;kjnv
+	----delimiter------------------
