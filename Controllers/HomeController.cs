@@ -4,6 +4,7 @@ using ASP_P15.Services.Hash;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace ASP_P15.Controllers
 {
@@ -61,7 +62,9 @@ namespace ASP_P15.Controllers
                 // є дані - це редирект, обробляємо дані
                 var formModel = JsonSerializer.Deserialize<SignUpFormModel>(
                     HttpContext.Session.GetString("signup-data")!)!;
+
                 model.FormModel = formModel;
+                model.ValidationErrors = _Validate(formModel);
 
                 ViewData["data"] = $"email: {formModel.UserEmail}, name: {formModel.UserName}";
                 
@@ -118,6 +121,81 @@ namespace ASP_P15.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+
+
+        private Dictionary<String, String?> _Validate(SignUpFormModel model)
+        {
+            /* Валідація - перевірка даних на відповідність певним шаблонам/правилам
+             * Результат валідації - {
+             *   "UserEmail": null,          null - як ознака успішної валідації
+             *   "UserName": "Too short"     значення - повідомлення про помилку
+             * }
+             */
+            Dictionary<String, String?> res = new();
+
+            var emailRegex = new Regex(@"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$");
+            res[nameof(model.UserEmail)] =
+                String.IsNullOrEmpty(model.UserEmail)
+                ? "Не допускається порожнє поле"
+                : emailRegex.IsMatch(model.UserEmail)
+                    ? null
+                    : "Введіть коректну адресу";
+            
+            var nameRegex = new Regex(@"^\w{2,}(\s+\w{2,})*$");
+            res[nameof(model.UserName)] =
+                String.IsNullOrEmpty(model.UserName)
+                ? "Не допускається порожнє поле"
+                : nameRegex.IsMatch(model.UserName)
+                    ? null
+                    : "Введіть коректне ім'я";
+
+            if (String.IsNullOrEmpty(model.UserPassword))
+            {
+                res[nameof(model.UserPassword)] = "Не допускається порожнє поле";
+            }
+            else if(model.UserPassword.Length < 3)
+            {
+                res[nameof(model.UserPassword)] = "Пароль має бути не коротшим за 8 символів";
+            }
+            else 
+            {
+                List<String> parts = [];
+                if (!Regex.IsMatch(model.UserPassword, @"\d"))
+                {
+                    parts.Add(" одну цифру");
+                }
+                if (!Regex.IsMatch(model.UserPassword, @"\D"))
+                {
+                    parts.Add(" одну літеру");
+                }
+                if (!Regex.IsMatch(model.UserPassword, @"\W"))
+                {
+                    parts.Add(" один спецсимвол");
+                }
+                if (parts.Count > 0)
+                {
+                    res[nameof(model.UserPassword)] = 
+                        "Пароль повинен містити щонайменше" + String.Join(',', parts);
+                }
+                else
+                {
+                    res[nameof(model.UserPassword)] = null;
+                }                
+            }
+
+
+            res[nameof(model.UserRepeat)] = model.UserPassword == model.UserRepeat
+                ? null
+                : "Паролі не збігаються";
+
+
+            res[nameof(model.IsAgree)] = model.IsAgree 
+                ? null 
+                : "Необхідно прийняти правила сайту";
+
+            return res;
         }
     }
 }

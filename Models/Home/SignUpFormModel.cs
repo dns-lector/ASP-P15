@@ -10,6 +10,19 @@ namespace ASP_P15.Models.Home
 
         [FromForm(Name = "user-name")]
         public String UserName { get; set; } = null!;
+
+
+        [FromForm(Name = "user-password")]
+        public String UserPassword { get; set; } = null!;
+
+
+        [FromForm(Name = "user-repeat")]
+        public String UserRepeat { get; set; } = null!;
+
+
+        [FromForm(Name = "is-agree")]
+        public Boolean IsAgree { get; set; } = false;
+
     }
 }
 /* Моделі (в ASP) - це класи, за допомогою яких реалізується передача
