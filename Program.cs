@@ -1,5 +1,7 @@
+using ASP_P15.Data;
 using ASP_P15.Services.Hash;
 using ASP_P15.Services.Kdf;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,13 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+// Реєструємо контекст даних
+builder.Services.AddDbContext<DataContext>( options => 
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("LocalDb")
+    )
+);
 
 var app = builder.Build();
 

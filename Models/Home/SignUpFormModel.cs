@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
 
 namespace ASP_P15.Models.Home
 {
@@ -18,6 +19,11 @@ namespace ASP_P15.Models.Home
 
         [FromForm(Name = "user-repeat")]
         public String UserRepeat { get; set; } = null!;
+
+
+        [JsonIgnore]
+        [FromForm(Name = "user-avatar")]
+        public IFormFile UserAvatar { get; set; } = null!;
 
 
         [FromForm(Name = "is-agree")]

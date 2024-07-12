@@ -1,6 +1,9 @@
+using ASP_P15.Data;
 using ASP_P15.Models;
 using ASP_P15.Models.Home;
 using ASP_P15.Services.Hash;
+using ASP_P15.Services.Kdf;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Text.Json;
@@ -14,15 +17,22 @@ namespace ASP_P15.Controllers
         private readonly ILogger<HomeController> _logger;
         // інжектуємо наш (хеш-) сервіс
         private readonly IHashService _hashService;
+        private readonly DataContext _dataContext;
+        private readonly IKdfService _kdfService;
 
-        public HomeController(ILogger<HomeController> logger, IHashService hashService)
+        private String fileErrorKey = "file-error";
+        private String fileNameKey  = "file-name";
+
+        public HomeController(ILogger<HomeController> logger, IHashService hashService, DataContext dataContext, IKdfService kdfService)
         {
             _logger = logger;
             _hashService = hashService;
+            _dataContext = dataContext;
+            _kdfService = kdfService;
             /* Інжекція через конструктор - найбільш рекомендований варіант. 
-               Контейнер служб (інжектор) аналізує параметри конструктора і сам 
-               підставляє до нього необхідні об'єкти (інстанси) служб
-            */
+Контейнер служб (інжектор) аналізує параметри конструктора і сам 
+підставляє до нього необхідні об'єкти (інстанси) служб
+*/
         }
 
         public IActionResult Index()
@@ -66,8 +76,33 @@ namespace ASP_P15.Controllers
                 model.FormModel = formModel;
                 model.ValidationErrors = _Validate(formModel);
 
+                if(model.ValidationErrors.Where(p => p.Value != null).Count() == 0)
+                {
+                    // немає помилок валідації - реєструємо у БД
+                    String salt = _hashService.Digest(Guid.NewGuid().ToString())[..20];
+                    _dataContext.Users.Add(new()
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = formModel.UserName,
+                        Email = formModel.UserEmail,
+                        Salt = salt,
+                        Dk = _kdfService.DerivedKey(formModel.UserPassword, salt),
+                        Registered = DateTime.Now,
+                        Avatar = HttpContext.Session.GetString(fileNameKey)
+                    });
+                    _dataContext.SaveChanges();
+                }
+
+
                 ViewData["data"] = $"email: {formModel.UserEmail}, name: {formModel.UserName}";
-                
+
+                // Ім'я завантаженого файлу (аватарки) також зберігається у сесії
+                if (HttpContext.Session.Keys.Contains(fileNameKey))
+                {
+                    ViewData["avatar"] = HttpContext.Session.GetString(fileNameKey);
+                    HttpContext.Session.Remove(fileNameKey);
+                }
+
                 // Видаляємо дані з сесії, щоб уникнути повторного оброблення
                 HttpContext.Session.Remove("signup-data");
             }
@@ -95,6 +130,42 @@ namespace ASP_P15.Controllers
             HttpContext.Session.SetString("signup-data", 
                 JsonSerializer.Serialize(formModel));
             
+            if (formModel.UserAvatar != null)
+            {
+                // 1. Відокремити розширення файлу
+                int dotPosition = formModel.UserAvatar.FileName.IndexOf('.');
+                if (dotPosition == -1)  // немає розширення файл
+                {
+                    HttpContext.Session.SetString(fileErrorKey, 
+                        "Файли без розширення не приймаються");
+                }
+                else
+                {
+                    String ext = formModel.UserAvatar.FileName[dotPosition..];
+                    // 2. Перевірити розширення на перелік дозволених
+                    if (ext == ".jpg" || ext == ".png" || ext == ".bmp")
+                    {
+                        // 3. Сформувати ім'я файлу, переконатись, що не перекривається наявний файл
+                        String filename;
+                        String path = "./Uploads/"; //  "./wwwroot/img/upload/";
+                        do
+                        {
+                            filename = Guid.NewGuid().ToString() + ext;
+                        } while (System.IO.File.Exists(path + filename));
+                        // 4. Зберегти файл, зберегти у БД ім'я файлу.
+                        using Stream writer = new StreamWriter(path + filename).BaseStream;
+                        formModel.UserAvatar.CopyTo(writer);
+                        HttpContext.Session.SetString(fileNameKey, filename);
+                    }
+                    else
+                    {
+                        HttpContext.Session.SetString(fileErrorKey,
+                        "Файл має недозволене розширення");
+                    }
+                }
+                
+                
+            }
             return RedirectToAction(nameof(SignUp));
 
             // ViewData["data"] = $"email: {formModel.UserEmail}, name: {formModel.UserName}";
@@ -123,6 +194,17 @@ namespace ASP_P15.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        public IActionResult Download([FromRoute] String id)
+        {
+            // id - закладена в маршрутизаторі назва, суть - ім'я файлу
+            String filename = $"./Uploads/{id}";
+            if(System.IO.File.Exists(filename))
+            {
+                var stream = new StreamReader(filename).BaseStream;
+                return File(stream, "image/png");
+            }
+            return NotFound();
+        }
 
 
         private Dictionary<String, String?> _Validate(SignUpFormModel model)
@@ -194,6 +276,14 @@ namespace ASP_P15.Controllers
             res[nameof(model.IsAgree)] = model.IsAgree 
                 ? null 
                 : "Необхідно прийняти правила сайту";
+
+            // Результати перевірки файлу збережені у сесії
+            if (HttpContext.Session.Keys.Contains(fileErrorKey))
+            {
+                res[nameof(model.UserAvatar)] = 
+                    HttpContext.Session.GetString(fileErrorKey);
+                HttpContext.Session.Remove(fileErrorKey);
+            }
 
             return res;
         }
