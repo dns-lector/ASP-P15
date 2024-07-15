@@ -90,3 +90,28 @@ HTML Forms
 
 	JPEG11980hvuanw98y3w3urh;kjnavp9792t4rb;kjnv
 	----delimiter------------------
+---------------------------------------------------------------------------
+
+SUBMIT / AJAX
+
+Form/submit                   Server
+<form>
+<submit> --------------------> Новий
+</form>						   HTML
+								 |
+Оновлення сторінки <--------------
+
+
+
+AJAX (Async Javascript And XML)
+
+<input>
+<input>
+<button click
+        JS fetch ------------> Дані 
+							   XML / JSON
+        Обробник JS <----------
+Протягом обміну даними
+сторінка не оновлюється
+та зберігає інтерактивність
+(відповідає на UI)
