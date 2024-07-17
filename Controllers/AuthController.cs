@@ -1,4 +1,5 @@
 ﻿using ASP_P15.Data;
+using ASP_P15.Data.Entities;
 using ASP_P15.Services.Kdf;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -36,11 +37,22 @@ namespace ASP_P15.Controllers
             var user = _dataContext.Users.FirstOrDefault(u => u.Email == email);
             if (user != null && _kdfService.DerivedKey(password, user.Salt) == user.Dk)
             {
+                // генеруємо токен
+                Token token = new()
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = user.Id,
+                    ExpiresAt = DateTime.Now.AddMinutes(2),
+                };
+                _dataContext.Tokens.Add(token);
+                _dataContext.SaveChanges();
+                // зберігаємо токен у сесії
+                HttpContext.Session.SetString("token", token.Id.ToString());
                 return new
                 {
                     status = "Ok",
                     code = 200,
-                    message = "Authenticated"
+                    message = token.Id  // передаємо токен клієнту
                 };
             }
             else
@@ -66,7 +78,28 @@ namespace ASP_P15.Controllers
  *   POST /api/auth  -> DoPost()
  *   PUT  /api/auth  -> DoPut()
  *   
- *   Д.З. Реалізувати можливість входу у систему за допомогою 
- *   паролю та одного з інших параметрів: дата народження, ім'я, e-mail.
- *   Визначати тип параметра автоматично.
+ *   
+ * Токени авторизації  
+ * Токен - "жетон", "перепустка" - дані, що видаються як результат
+ * автентифікації і далі використовуються для "підтвердження особи" -
+ * авторизації.
+ *   
+ *   
+ *   
+ *   
+ *   
+ *   
+ *   
+ *   
+ *   
+ *   
+ *   
+ *   
+ *   
+ *   
+ *   Д.З. Реалізувати перевірку токена при автентифікації
+ *   - перед тим як згенерувати новий токен слід перевірити чи є
+ *      для даного користувача активний токен (не протермінований)
+ *   - якщо є, то видати цей токен
+ *   - якщо немає, то генерувати новий
  */

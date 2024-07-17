@@ -43,7 +43,7 @@ function authClick() {
             errorDiv.show("Відмова. Перевірьте введені дані.");
         }
         else {
-            errorDiv.show("OK");
+            window.location.reload();
         }
     });
 }

@@ -1,4 +1,5 @@
 using ASP_P15.Data;
+using ASP_P15.Middleware.SessionAuth;
 using ASP_P15.Services.Hash;
 using ASP_P15.Services.Kdf;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,7 @@ builder.Services.AddSingleton<IKdfService, Pbkdf1Service>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.IdleTimeout = TimeSpan.FromMinutes(10);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
@@ -43,12 +44,12 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
-
 app.UseSession();
+
+// Наші Middleware
+app.UseSessionAuth();
 
 app.MapControllerRoute(   // маршрутизатор
     name: "default",

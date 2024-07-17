@@ -9,3 +9,12 @@
 <h3><a href="/Home/Intro">Вступ. Перший проєкт.</a></h3>
 <h3><a href="/Home/Razor">Синтаксис Razor.</a></h3>
 <h3><a asp-action="Ioc">Інверсія управління.</a></h3>
+
+@if(Context.Items["token"] != null)
+{
+    <b>Ви авторизовані</b>
+}
+else
+{
+    <i>Немає авторизації</i>
+}
