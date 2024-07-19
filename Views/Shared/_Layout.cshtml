@@ -1,4 +1,14 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+@{
+    bool isAuthenticated = Context.User.Identity?.IsAuthenticated ?? false;
+    String? avatar = Context
+        .User
+        .Claims
+        .FirstOrDefault(c => c.Type == ClaimTypes.UserData)
+        ?.Value;
+    bool hasAvatar = ! String.IsNullOrEmpty(avatar);
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -27,11 +37,26 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-outline-secondary mx-2" data-bs-toggle="modal" data-bs-target="#authModal">
-                        <i class="bi bi-box-arrow-in-right"></i>
-                    </button>
-                    <a asp-action="SignUp" title="Реєстрація" class="btn btn-outline-secondary"><i class="bi bi-plus-square"></i></a>
+                    @if (isAuthenticated)
+                    {
+                        if (hasAvatar)
+                        {
+                            
+                        }
+                        else
+                        {
+                            
+                        }
+                    }
+                    else
+                    {
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-outline-secondary mx-2" data-bs-toggle="modal" data-bs-target="#authModal">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                        </button>
+                        <a asp-action="SignUp" title="Реєстрація" class="btn btn-outline-secondary"><i class="bi bi-plus-square"></i></a>
+                    }
+                    
                 </div>
             </div>
         </nav>

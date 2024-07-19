@@ -1,5 +1,6 @@
 ﻿using ASP_P15.Data;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace ASP_P15.Middleware.SessionAuth
 {
@@ -34,7 +35,27 @@ namespace ASP_P15.Middleware.SessionAuth
                     if (token.ExpiresAt > DateTime.Now)
                     {
                         // зберігаємо токен у контексті
-                        context.Items.Add("token", token);
+                        // context.Items.Add("token", token);
+
+                        // через токен знаходимо кому він виданий (користувача)
+                        if (dataContext.Users.Find(token.UserId) is Data.Entities.User user)
+                        {
+                            // Уніфікований підхід - Claims:
+                            // "перекладаємо" дані з Entities.User до типових Claims
+                            System.Security.Claims.Claim[] claims = [
+                                new(ClaimTypes.Email,    user.Email),
+                                new(ClaimTypes.Name,     user.Name ),
+                                new(ClaimTypes.Sid,      user.Id.ToString()),
+                                new(ClaimTypes.UserData, user.Avatar ?? ""),
+                            ];
+                            // в ASP у HttpContext є властивість User, що є "власником" Claims
+                            context.User = new ClaimsPrincipal(     // користувач може пройти
+                                new ClaimsIdentity(                 // декілька авторизацій або
+                                    claims,                         // одночасно, або одну з них.
+                                    nameof(SessionAuthMiddleware)   // Для розрізнення додається
+                                )                                   // параметр authenticationType
+                            );                                      // (nameof(SessionAuthMiddleware))
+                        }
                     }
                 }
             }
