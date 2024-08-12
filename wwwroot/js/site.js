@@ -2,7 +2,16 @@
     const authButton = document.getElementById("auth-button");
     if (authButton) authButton.addEventListener('click', authClick);
     else console.error("auth-button not found");
+
+    const logOutButton = document.getElementById("log-out-button");
+    if (logOutButton) logOutButton.addEventListener('click', logOutClick);
 });
+
+function logOutClick() {
+    fetch('/api/auth', {
+        method: 'DELETE'
+    }).then(r => location.reload());
+}
 
 function authClick() {
     const emailInput = document.querySelector('[name="auth-user-email"]');

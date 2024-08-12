@@ -31,3 +31,17 @@ body {
     margin-bottom: 0;
     vertical-align: middle;
 }
+.avatar, .no-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: block;
+}
+.no-avatar {
+    background-color: burlywood;
+    font-size: x-large;
+    text-align: center;
+}
+.a-no-underline {
+    text-decoration: none;
+}

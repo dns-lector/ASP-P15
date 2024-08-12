@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Home\Profile1.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Uploads\" />
     <Folder Include="wwwroot\img\upload\" />
   </ItemGroup>
@@ -19,6 +23,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Home\Profile1.cshtml" />
   </ItemGroup>
 
 </Project>

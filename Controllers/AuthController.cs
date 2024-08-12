@@ -65,6 +65,13 @@ namespace ASP_P15.Controllers
                 };
             }            
         }
+
+        [HttpDelete]
+        public object DoDelete()
+        {
+            HttpContext.Session.Remove("token");
+            return "Ok";
+        }
     }
 }
 /*
