@@ -47,6 +47,9 @@ namespace ASP_P15.Middleware.SessionAuth
                                 new(ClaimTypes.Name,     user.Name ),
                                 new(ClaimTypes.Sid,      user.Id.ToString()),
                                 new(ClaimTypes.UserData, user.Avatar ?? ""),
+
+                                new(ClaimTypes.DateOfBirth, user.Birthdate?.ToShortDateString() ?? "- - -"),
+                                new("User::Registered", user.Registered.ToString()),
                             ];
                             // в ASP у HttpContext є властивість User, що є "власником" Claims
                             context.User = new ClaimsPrincipal(     // користувач може пройти

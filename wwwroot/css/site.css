@@ -51,6 +51,10 @@ body {
     background-color: #f9f9fa
 }
 
+#profile-edit {
+    cursor: pointer;
+}
+
 .padding {
     padding: 3rem !important
 }

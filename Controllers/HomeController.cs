@@ -42,7 +42,12 @@ namespace ASP_P15.Controllers
 
         public IActionResult Profile()
         {
-            return View();
+            // if (HttpContext.User.Identity?.IsAuthenticated == true)
+            if (HttpContext.User.Identity?.IsAuthenticated ?? false)
+            {
+                return View();
+            }
+            return RedirectToAction(nameof(this.Index));
         }
 
         public IActionResult Privacy()
