@@ -3,6 +3,8 @@ using ASP_P15.Data.Entities;
 using ASP_P15.Services.Kdf;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace ASP_P15.Controllers
 {
@@ -12,11 +14,13 @@ namespace ASP_P15.Controllers
     {
         private readonly DataContext _dataContext;
         private readonly IKdfService _kdfService;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(DataContext dataContext, IKdfService kdfService)
+        public AuthController(DataContext dataContext, IKdfService kdfService, ILogger<AuthController> logger)
         {
             _dataContext = dataContext;
             _kdfService = kdfService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -71,6 +75,22 @@ namespace ASP_P15.Controllers
         {
             HttpContext.Session.Remove("token");
             return "Ok";
+        }
+
+        [HttpPut]
+        public async Task<object> DoPutAsync()
+        {
+            // Дані, що передаються в тілі запиту доступні через Request.Body
+            String body = await new StreamReader(Request.Body).ReadToEndAsync();
+
+            _logger.LogWarning(body);
+
+            JsonNode json = JsonSerializer.Deserialize<JsonNode>(body)
+                ?? throw new Exception("JSON in body is invalid");
+
+            _logger.LogInformation( json["email"]?.GetValue<String>() );
+
+            return new {status = "OK"};
         }
     }
 }

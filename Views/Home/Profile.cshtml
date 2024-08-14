@@ -60,7 +60,7 @@
                                         <b class="img-radius avatar-letter">@avatarLetter</b>
                                     }
                                 </div>
-                                <h6 class="f-w-600" profile-editable>@userName</h6>
+                                <h6 class="f-w-600" profile-editable="name">@userName</h6>
                                 <p>З нами з @registered</p>
                                 <i id="profile-edit" class="bi bi-pencil-square"></i>
                             </div>
@@ -71,11 +71,11 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <p class="m-b-10 f-w-600">Email</p>
-                                        <h6 class="text-muted f-w-400" profile-editable>@email</h6>
+                                        <h6 class="text-muted f-w-400" profile-editable="email">@email</h6>
                                     </div>
                                     <div class="col-sm-6">
                                         <p class="m-b-10 f-w-600">Дата народження</p>
-                                        <h6 class="text-muted f-w-400" profile-editable>@birthdate</h6>
+                                        <h6 class="text-muted f-w-400" profile-editable="birthdate">@birthdate</h6>
                                     </div>
                                 </div>
                                 <h6 class="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Projects</h6>
@@ -103,8 +103,70 @@
     </div>
 </div>
 
-Д.З. Закласти у кабінет користувача поля для зміни паролю:
-- старий пароль
-- новий пароль 
-Можна використати наявні поля форми "Projects"/"Most Viewed"/"Recent"
-Переводити їх в режим редагування при натисканні відповідної кнопки
+CRUD - Create Read Update Delete 
+ТЗ 
+Користувач вводить нові дані, натискає "кінець редагування", та
+- відбувається аналіз змін: визначаємо які з полів зазнали змін 
+- якщо змін немає, то нічого не робимо
+- якщо є, то проводимо валідацію (до надсилання)
+- надсилаємо дані, очікуємо відповідь про успішність/помилковість оновлення
+- якщо відповідь позитивна, то видаємо повідомлення 
+  якщо ні, то повідомляємо та відновлюємо початкові дані 
+
+Д.З. Забезпечити передачу для зміни даних про користувача новий і старий пароль
+якщо вони вводяться для зміни. Вивести за допомогою логера дані, що приходять
+на сервер.
+
+
+Тернарні вирази та їх скорочені форми
+
+x = (умова) ? значення1 : значення2;  // expression
+
+if(умова) {   // statement
+    x = значення1;
+}
+else {
+    x = значення2;
+}
+
+func(...) 
+
+if(умова) {   // statement   | func( (умова) ? значення1 : значення2 ) ;
+    func(значення1) ;        | 
+}                            | 
+else {                       | 
+    func(значення2) ;        | 
+}                            | 
+
+setTextColor(
+    isSelected
+     ? red
+     : isActive
+      ? yellow
+      : isDeleted
+       ? gray
+       : normal
+)
+
+Скорочені форми, null-safety
+
+null-Коалесценція - вираз, що повертає перший не NULL операнд 
+COALESCE( x, y, 10 )
+res = x ?? y ?? 10;
+
+null-propagation 
+x?.y 
+x == null ? null : x.y
+
+x?.y?.w 
+
+null-check 
+x!
+x!.y 
+x == null ? throw NullReference : x.y
+
+w = x?.y ?? 10
+
+x ??= 10 
+x = x == null ? 10 : x
+x = x ?? 10

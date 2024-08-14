@@ -12,7 +12,9 @@
 
 function profileEditClick(e) {
     const btn = e.target;
-    if (btn.classList.contains('bi-check2-square')) {  // <i class="bi bi-check2-square"></i>
+    const isEditFinish = btn.classList.contains('bi-check2-square');  // <i class="bi bi-check2-square"></i>
+
+    if (isEditFinish) {
         btn.classList.remove('bi-check2-square');
         btn.classList.add('bi-pencil-square');
     }
@@ -21,14 +23,40 @@ function profileEditClick(e) {
         btn.classList.remove('bi-pencil-square');
     }
 
+    let changes = {};
     for (let elem of document.querySelectorAll('[profile-editable]')) {
-        if (elem.hasAttribute('contenteditable')) {
+        if (isEditFinish) {  // завершення редагування
             elem.removeAttribute('contenteditable');
+            // треба визначити чи змінювався елемент
+            if (elem.initalText != elem.innerText) {  // зміни є
+                // дізнаємось назву поля, за яке він відповідає
+                const fieldName = elem.getAttribute('profile-editable');
+                // console.log(fieldName + ' -> ' + elem.innerText);
+                changes[fieldName] = elem.innerText;
+            }
         }
-        else {
+        else {  // початок редагування
+            // переводимо елементи в режим редагування
             elem.setAttribute('contenteditable', 'true');
+            // зберігаємо значення, що було на початок редагування
+            elem.initalText = elem.innerText;  // initalText - нове поле, яке
+            // JS дозволяє створювати під час роботи (ми самі його придумали)
+        }        
+    }
+    if (isEditFinish) {
+        if (Object.keys(changes).length > 0) {
+            console.log(changes);
+            fetch("/api/auth", {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(changes)
+            });
         }
-        
+        // else {
+        //     console.log("No changes");
+        // }
     }
 }
 
