@@ -28,7 +28,7 @@ function profileEditClick(e) {
         if (isEditFinish) {  // завершення редагування
             elem.removeAttribute('contenteditable');
             // треба визначити чи змінювався елемент
-            if (elem.initalText != elem.innerText) {  // зміни є
+            if (elem.initialText != elem.innerText) {  // зміни є
                 // дізнаємось назву поля, за яке він відповідає
                 const fieldName = elem.getAttribute('profile-editable');
                 // console.log(fieldName + ' -> ' + elem.innerText);
@@ -39,7 +39,7 @@ function profileEditClick(e) {
             // переводимо елементи в режим редагування
             elem.setAttribute('contenteditable', 'true');
             // зберігаємо значення, що було на початок редагування
-            elem.initalText = elem.innerText;  // initalText - нове поле, яке
+            elem.initialText = elem.innerText;  // initalText - нове поле, яке
             // JS дозволяє створювати під час роботи (ми самі його придумали)
         }        
     }
@@ -58,6 +58,18 @@ function profileEditClick(e) {
                         alert(j.message);
                     }
                     else {
+                        // а) відновлення початкових даних, оскільки введені
+                        // призвели до помилки
+                        // for (let elem of document.querySelectorAll('[profile-editable]')) {
+                        //     elem.innerText = elem.initialText;
+                        // }
+                        // б) не вимикаємо режим редагування, точніше включаємо знову
+                        for (let elem of document.querySelectorAll('[profile-editable]')) {
+                            elem.setAttribute('contenteditable', 'true');
+                        }
+                        btn.classList.add('bi-check2-square');
+                        btn.classList.remove('bi-pencil-square');
+
                         alert(j.message);
                     }
                 });
