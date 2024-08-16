@@ -3,8 +3,10 @@ using ASP_P15.Data.Entities;
 using ASP_P15.Services.Kdf;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 
 namespace ASP_P15.Controllers
 {
@@ -46,7 +48,7 @@ namespace ASP_P15.Controllers
                 {
                     Id = Guid.NewGuid(),
                     UserId = user.Id,
-                    ExpiresAt = DateTime.Now.AddMinutes(2),
+                    ExpiresAt = DateTime.Now.AddHours(3),
                 };
                 _dataContext.Tokens.Add(token);
                 _dataContext.SaveChanges();
@@ -88,9 +90,64 @@ namespace ASP_P15.Controllers
             JsonNode json = JsonSerializer.Deserialize<JsonNode>(body)
                 ?? throw new Exception("JSON in body is invalid");
 
-            _logger.LogInformation( json["email"]?.GetValue<String>() );
+            String? email = json["email"]?.GetValue<String>();
+            String? name = json["name"]?.GetValue<String>();
+            String? birthdate = json["birthdate"]?.GetValue<String>();
 
-            return new {status = "OK"};
+            if (email == null && name == null && birthdate == null)
+            {
+                return new { code = 400, status = "Error", message = "No data" };
+            }
+            if (email != null) 
+            {
+                var emailRegex = new Regex(@"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$");
+                if ( ! emailRegex.IsMatch(email))
+                {
+                    return new { code = 422, status = "Error", message = "Email match no pattern" };
+                }
+            }
+            DateTime? birthDateTime = null;
+            if (birthdate != null) 
+            {
+                try
+                {
+                    birthDateTime = DateTime.Parse(birthdate);
+                }
+                catch 
+                {
+                    return new { code = 422, status = "Error", message = "Birthdate unparseable" };
+                }
+            }
+
+            Guid userId = Guid.Parse(
+                HttpContext
+                .User
+                .Claims
+                .First(c => c.Type == ClaimTypes.Sid)
+                .Value);
+
+            var user = _dataContext.Users.Find(userId);
+            if (user == null)
+            {
+                return new { code = 403, status = "Error", message = "Forbidden" };
+            }
+
+            if (email != null)
+            {
+                user.Email = email;
+            }
+            if (name != null)
+            {
+                user.Name = name;
+            }
+            if (birthDateTime != null) 
+            {
+                user.Birthdate = birthDateTime;
+            }
+
+            await _dataContext.SaveChangesAsync();
+
+            return new { code = 200, status = "OK", message = "Updated" };
         }
     }
 }

@@ -52,7 +52,15 @@ function profileEditClick(e) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(changes)
-            });
+            }).then(r => r.json())
+                .then(j => {
+                    if (j.status == "OK") {
+                        alert(j.message);
+                    }
+                    else {
+                        alert(j.message);
+                    }
+                });
         }
         // else {
         //     console.log("No changes");
@@ -109,3 +117,17 @@ function authClick() {
         }
     });
 }
+
+/*
+    fun() { ***** }
+
+    --- await fun() -------
+    ---  *****  -------
+
+    --- fun().then(++++) -------
+    --- | --------
+        | ***** ++++ (C#)
+
+    --- v --------   =============
+                  | ***** ++++ (JS)
+*/
