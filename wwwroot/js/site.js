@@ -8,7 +8,28 @@
 
     const profileEditButton = document.getElementById("profile-edit");
     if (profileEditButton) profileEditButton.addEventListener('click', profileEditClick);
+
+    const profileDeleteButton = document.getElementById("profile-delete");
+    if (profileDeleteButton) profileDeleteButton.addEventListener('click', profileDeleteClick);
 });
+
+function profileDeleteClick(e) {
+    if (confirm("Підтверджуєте видалення облікового запису?")) {
+        fetch(
+            "/api/auth", {
+            method: "UNLINK",
+        })
+        .then(r => r.json())
+        .then(j => {
+            if (j.status == "OK") {
+                window.location = "/";
+            }
+            else {
+                alert(j.message);
+            }
+        });
+    }
+}
 
 function profileEditClick(e) {
     const btn = e.target;

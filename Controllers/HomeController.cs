@@ -40,6 +40,11 @@ namespace ASP_P15.Controllers
             return View();
         }
 
+        public IActionResult Shop()
+        {
+            return View();
+        }
+
         public IActionResult Profile()
         {
             // if (HttpContext.User.Identity?.IsAuthenticated == true)

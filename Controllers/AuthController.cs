@@ -40,7 +40,12 @@ namespace ASP_P15.Controllers
             // Розшифрувати DK неможливо, тому повторюємо розрахунок DK з сіллю, що
             // зберігається у користувача, та паролем, який передано у параметрі
             
-            var user = _dataContext.Users.FirstOrDefault(u => u.Email == email);
+            var user = _dataContext
+                .Users
+                .FirstOrDefault(u => 
+                    u.Email == email && 
+                    u.DeleteDt == null);  // додаємо умову, що користувач не видалений
+
             if (user != null && _kdfService.DerivedKey(password, user.Salt) == user.Dk)
             {
                 // генеруємо токен
@@ -149,6 +154,70 @@ namespace ASP_P15.Controllers
 
             return new { code = 200, status = "OK", message = "Updated" };
         }
+
+        public async Task<object> DoOther()
+        {
+            switch (Request.Method)
+            {
+                case "UNLINK": return await DoUnlink();
+                default: return new
+                {
+                    status = "error",
+                    code = 405,
+                    message = "Method Not Allowed"
+                };
+            }
+        }
+
+        private async Task<object> DoUnlink()
+        {
+            Guid userId;
+            try
+            {
+                userId = Guid.Parse(
+                    HttpContext
+                    .User
+                    .Claims
+                    .First(c => c.Type == ClaimTypes.Sid)
+                    .Value
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("DoUnlink Exception: {ex}", ex.Message);
+                return new { 
+                    code = 401, 
+                    status = "Error", 
+                    message = "UnAuthorized" 
+                };
+            }
+
+            var user = await _dataContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return new { code = 403, status = "Error", message = "Forbidden" };
+            }
+
+            user.DeleteDt = DateTime.Now;
+            // Право бути забутим - видалення персональних даних
+            user.Name = "";
+            user.Email = "";
+            user.Birthdate = null;
+            if (user.Avatar != null)  // треба видалити файл-аватарку
+            {
+                String path = "./Uploads/";
+                System.IO.File.Delete(path + user.Avatar);
+                user.Avatar = null;
+            }
+            await _dataContext.SaveChangesAsync();   // фіксуємо зміни у БД
+            this.DoDelete();   // видаляємо токен
+            return new
+            {
+                status = "OK",
+                code = 200,
+                message = "Deleted"
+            };
+        }
     }
 }
 /*
@@ -182,4 +251,13 @@ namespace ASP_P15.Controllers
  * = розглядається два варіанти видалень
  *  soft-delete - помітка видалення і у випадку людини стирання персональних даних
  *  hard-delete - повне видалення - допускається лише за відсутності зв'язків
+ */
+/* Д.З. Реалізувати відновлення користувача:
+ * - при видаленні видавати повідомлення "Для відновлення введіть дату
+ *    реєстрації ([вивести дату]) та свій пароль"
+ * - до вікна авторизації додати кнопку "відновити" яка додає поле з 
+ *    введенням дати реєстрації (всього три поля - e-mail, пароль, дата)
+ * - при натисненні кнопки передається запит методом LINK, у якому
+ *    перевіряється дата та пароль, якщо ОК - зберігається e-mail та
+ *    скидається дата видалення.
  */
