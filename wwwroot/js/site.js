@@ -1,4 +1,26 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
+﻿document.addEventListener('submit', (e) => {
+    const form = e.target;
+    if (form.id == 'shop-group-form') {
+        e.preventDefault();
+        console.log('submit prevented');
+        const formData = new FormData(form);
+        fetch("/api/group", {
+            method: 'POST',
+            body: formData
+        }).then(r => r.json()).then(j => {
+            if (j.status == 'OK') {
+                // alert('Додано успішно');
+                window.location.reload();
+            }
+            else {
+                alert(j.message);
+            }
+        });
+    }
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
     const authButton = document.getElementById("auth-button");
     if (authButton) authButton.addEventListener('click', authClick);
     else console.error("auth-button not found");

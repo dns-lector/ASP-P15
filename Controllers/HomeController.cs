@@ -1,6 +1,7 @@
 using ASP_P15.Data;
 using ASP_P15.Models;
 using ASP_P15.Models.Home;
+using ASP_P15.Models.Shop;
 using ASP_P15.Services.Hash;
 using ASP_P15.Services.Kdf;
 using Microsoft.AspNetCore.Http;
@@ -42,7 +43,11 @@ namespace ASP_P15.Controllers
 
         public IActionResult Shop()
         {
-            return View();
+            ShopPageModel model = new()
+            {
+                ProductGroups = _dataContext.Groups.Where(g => g.DeleteDt == null)
+            };
+            return View(model);
         }
 
         public IActionResult Profile()
@@ -181,6 +186,7 @@ namespace ASP_P15.Controllers
                 
                 
             }
+            
             return RedirectToAction(nameof(SignUp));
 
             // ViewData["data"] = $"email: {formModel.UserEmail}, name: {formModel.UserName}";

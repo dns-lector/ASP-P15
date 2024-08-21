@@ -2,6 +2,7 @@ using ASP_P15.Data;
 using ASP_P15.Middleware.SessionAuth;
 using ASP_P15.Services.Hash;
 using ASP_P15.Services.Kdf;
+using ASP_P15.Services.Upload;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,7 @@ builder.Services.AddControllersWithViews();
 // builder.Services.AddSingleton<IHashService, Md5HashService>();
 builder.Services.AddSingleton<IHashService, ShaHashService>();
 builder.Services.AddSingleton<IKdfService, Pbkdf1Service>();
+builder.Services.AddSingleton<IFileUploader, FileUploadService>();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

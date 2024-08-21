@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Uploads\" />
+    <Folder Include="Uploads\Shop\" />
     <Folder Include="wwwroot\img\upload\" />
   </ItemGroup>
 
