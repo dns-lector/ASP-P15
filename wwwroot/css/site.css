@@ -196,6 +196,23 @@ h6 {
         transition: all 0.3s ease-in-out;
     }
 
-
-
 /* endregion PROFILE */
+
+/* region SHOP */
+.product-group-card {
+    height: 300px;
+    width: 21vw;
+    margin: 1vw;
+    background-color: white;
+    display: inline-block;
+    vertical-align: top;
+}
+.product-group-card img {
+    margin: 0 10%;
+    width: 80%;
+    max-height: 220px;
+}
+.product-group-card a {
+    text-decoration: none;
+}
+/* endregion SHOP */

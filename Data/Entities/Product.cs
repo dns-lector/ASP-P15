@@ -10,6 +10,7 @@
         public double    Price       { get; set; }
         public long      Amount      { get; set; }
         public DateTime? DeleteDt    { get; set; }
+        public String?   Slug        { get; set; }
 
         public ProductGroup Group { get; set; }
     }

@@ -12,6 +12,10 @@ namespace ASP_P15.Models.Group
         [FromForm(Name = "group-description")]
         public String Description { get; set; } = null!;
 
+        
+        [FromForm(Name = "group-slug")]
+        public String Slug { get; set; } = null!;
+
 
         [FromForm(Name = "group-picture")]
         [JsonIgnore]

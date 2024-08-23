@@ -7,6 +7,7 @@
         public string    Description { get; set; }
         public string?   Image       { get; set; }
         public DateTime? DeleteDt    { get; set; }
+        public String?   Slug        { get; set; }
 
         public IEnumerable<Product> Products { get; set; }
     }

@@ -9,15 +9,15 @@
     <h1 class="display-4">Крамниця</h1>
 </div>
 
-@foreach(var grp in Model.ProductGroups)
+@foreach (var grp in Model.ProductGroups)
 {
     @Html.DisplayFor(m => grp)
 }
 
 
-@if(isAuthenticated)
+@if (isAuthenticated)
 {
-    <hr/>
+    <hr />
     <form enctype="multipart/form-data" method="post" id="shop-group-form">
         <div class="row">
             <div class="col col-6">
@@ -29,7 +29,7 @@
             <div class="col col-6">
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="description-addon"><i class="bi bi-person-vcard"></i></span>
-                    <textarea name="group-description" type="text" class="form-control " placeholder="Опис" aria-label="Опис" aria-describedby="description-addon" ></textarea>
+                    <textarea name="group-description" type="text" class="form-control " placeholder="Опис" aria-label="Опис" aria-describedby="description-addon"></textarea>
                 </div>
             </div>
         </div>
@@ -41,11 +41,20 @@
                 </div>
             </div>
             <div class="col col-6">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="slug-addon"><i class="bi bi-body-text"></i></span>
+                    <input name="group-slug" type="text" class="form-control "
+                            placeholder="Slug групи" aria-describedby="slug-addon">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-6">
                 <button type="submit" class="btn btn-outline-secondary">Додати</button>
             </div>
         </div>
     </form>
-    <hr/>
+    <hr />
     <form enctype="multipart/form-data" method="post" id="shop-product-form">
         <div class="row">
             <div class="col col-6">
@@ -88,8 +97,8 @@
         </div>
     </form>
 }
-@*  Д.З. Завершити роботу з відновлення видалених користувачів. 
-
+@*  Д.З. Продовжити роботу з відновлення видалених користувачів.
+    * Зробити верстку "картки" для групи товарів
 
     Система маршрутизації
     Home/Shop/[Group]

@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <Folder Include="Uploads\Shop\" />
+    <Folder Include="Views\Home\DisplayTemplates\" />
     <Folder Include="wwwroot\img\upload\" />
   </ItemGroup>
 
