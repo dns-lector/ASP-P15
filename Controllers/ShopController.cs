@@ -2,7 +2,7 @@
 using ASP_P15.Data.Entities;
 using ASP_P15.Models.Shop;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.EntityFrameworkCore;
 namespace ASP_P15.Controllers
 {
     public class ShopController(DataContext dataContext) : Controller
@@ -24,10 +24,19 @@ namespace ASP_P15.Controllers
         {
             // Розглядаємо можливість, що id - це або slug, або id
             ProductGroup? group = null;
-            group = _dataContext.Groups.FirstOrDefault(g => g.Slug == id);
+            var source = _dataContext
+                .Groups
+                .Include(g => g.Products)
+                .Where(g => g.DeleteDt == null);
+
+            group = source.FirstOrDefault(g => g.Slug == id);
             if (group == null)   // не знайшли за Slug, шукаємо за Id
             {
-                group = _dataContext.Groups.Find( Guid.Parse(id) );
+                try
+                {
+                    group = source.FirstOrDefault(g => g.Id == Guid.Parse(id));
+                }
+                catch { }
             }
             if (group == null)   // не знайдено ані за Slug, ані за Id
             {
@@ -45,4 +54,10 @@ namespace ASP_P15.Controllers
 
 /* Slug - ідентифікатор ресурсу (сторінки), сформульований, як правило,
  * зрозумілою для людини мовою
+ * 
+ * Д.З. Додати до сутності "User" поле ролі "Role" зі значенням за 
+ *  замовчанням "Guest".
+ * Для деяких користувачів встановити значення "Admin" (в ручну через БД)
+ * Обмежити можливість додавання продуктів та їх груп тільки 
+ *  користувачам з роллю "Admin"
  */
