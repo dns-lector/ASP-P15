@@ -1,4 +1,5 @@
 ﻿using ASP_P15.Data;
+using ASP_P15.Data.Entities;
 using ASP_P15.Models.Shop;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,8 +23,21 @@ namespace ASP_P15.Controllers
         public IActionResult Group(String id)
         {
             // Розглядаємо можливість, що id - це або slug, або id
-            ViewData["id"] = id;
-            return View();
+            ProductGroup? group = null;
+            group = _dataContext.Groups.FirstOrDefault(g => g.Slug == id);
+            if (group == null)   // не знайшли за Slug, шукаємо за Id
+            {
+                group = _dataContext.Groups.Find( Guid.Parse(id) );
+            }
+            if (group == null)   // не знайдено ані за Slug, ані за Id
+            {
+                return View("Page404");
+            }
+            ShopGroupPageModel model = new()
+            {
+                ProductGroup = group,
+            };
+            return View(model);
         }
 
     }
