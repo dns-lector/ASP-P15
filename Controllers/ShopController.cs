@@ -50,6 +50,12 @@ namespace ASP_P15.Controllers
             return View(model);
         }
 
+        public IActionResult Product(String id)
+        {
+            ShopProductPageModel model = new();
+
+            return View(model);
+        }
     }
 }
 

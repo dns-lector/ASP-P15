@@ -13,7 +13,7 @@
     }
 </div>
 
-
-@Model.ProductGroup.Name
-
-@Model.ProductGroup.Products.Count()
+@foreach (var product in @Model.ProductGroup.Products)
+{
+    @Html.DisplayFor(m => product, "Product")
+}

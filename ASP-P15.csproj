@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <Content Remove="Views\Home\Profile1.cshtml" />
-    <Content Remove="Views\Shop\DisplayTemplates\GroupRowItem.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,15 +28,6 @@
 
   <ItemGroup>
     <None Include="Views\Home\Profile1.cshtml" />
-    <None Include="Views\Shop\DisplayTemplates\GroupRowItem.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\Shop\DisplayTemplates\GroupRowItem.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\Shop\DisplayTemplates\GroupRowItem.cshtml" />
   </ItemGroup>
 
 </Project>

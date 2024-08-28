@@ -21,6 +21,41 @@ body {
   margin-bottom: 60px;
 }
 
+.product-card {
+    border: 1px solid lightgray;
+    display: inline-block;
+    height: 32vw;
+    margin: 5px;
+    width: 21vw;
+}
+.product-img-container {
+    background-color: #efefef;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 21vw;
+}
+.product-card img {
+    display: block;
+    width: 90%;
+    max-height: 95%;
+}
+.product-info-container {
+    padding: 5px 10px;
+}
+.product-card h2 {
+    font-size: 1.5vw;
+}
+.product-card p {
+    font-size: 1vw;
+}
+.product-card h3 {
+    font-size: 1.2vw;
+}
+
+
 .groups-row {
     display: flex;
     justify-content: center;
