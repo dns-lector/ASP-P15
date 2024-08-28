@@ -21,6 +21,23 @@ body {
   margin-bottom: 60px;
 }
 
+.groups-row {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+.groups-row-item {
+    border: 1px solid lightgray;
+    margin: 10px 15px;
+    padding: 8px;
+}
+.groups-row-item-selected {
+    border: 1px solid tomato;
+}
+.groups-row-item img {
+    height: 100px;
+}
+
 .page-title img {
     max-height: 8em;
     max-width: 10em;

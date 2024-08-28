@@ -1,5 +1,19 @@
 ﻿@model ASP_P15.Models.Shop.ShopGroupPageModel
 
+
+<div class="groups-row">
+    @foreach(var grp in Model.Groups)
+    {
+        <a asp-action="Group" asp-route-id="@(grp.Slug ?? grp.Id.ToString())">
+            <div class="groups-row-item @(grp.Id == Model.ProductGroup.Id ? "groups-row-item-selected" : "")">
+                <img src="/Home/Download/Shop_@(grp.Image)" alt="Picture" />
+                <p>@grp.Name</p>
+            </div>
+        </a>
+    }
+</div>
+
+
 @Model.ProductGroup.Name
 
 @Model.ProductGroup.Products.Count()

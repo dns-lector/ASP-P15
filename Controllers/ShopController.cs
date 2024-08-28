@@ -45,6 +45,7 @@ namespace ASP_P15.Controllers
             ShopGroupPageModel model = new()
             {
                 ProductGroup = group,
+                Groups = source,
             };
             return View(model);
         }
