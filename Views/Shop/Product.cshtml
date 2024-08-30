@@ -1,3 +1,35 @@
 ﻿@model ASP_P15.Models.Shop.ShopProductPageModel
 
-@Model.Product.Name
+<div class="row">
+    <div class="col col-6">
+        <img class="product-picture" src="/Home/Download/Shop_@(Model.Product.Image)" alt="Picture" />
+    </div>
+    <div class="col col-6">
+        <h1>@Model.Product.Name</h1>
+        <p>@Model.Product.Description</p>
+        <h2>₴ @Model.Product.Price.ToString("F2")</h2>
+        <button class="btn btn-outline-success"><i class="bi bi-cart3"></i> До кошику</button>
+    </div>
+</div>
+
+<h2>Вас також може зацікавити</h2>
+<div class="row">
+    @foreach (var product in @Model
+        .ProductGroup
+        .Products
+        .Where(p => p != Model.Product)
+        .Take(5))
+    {
+        <div class="col col-2">
+            <a asp-action="Product" asp-route-id="@(product.Slug ?? product.Id.ToString())">
+                <img class="product-picture" src="/Home/Download/Shop_@(product.Image)" alt="Picture" />
+                <p>@product.Name</p>
+            </a>
+        </div>
+    }
+</div>
+
+Д.З. Реалізувати відображення блоку "Вас також може зацікавити"
+- вирівняти розміри карток (ширину та висоту)
+- додати інформацію про ціну
+- при наведенні на картку виводити повний опис товару
