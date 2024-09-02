@@ -8,12 +8,20 @@ namespace ASP_P15.Data
         public DbSet<Entities.Token> Tokens { get; set; }
         public DbSet<Entities.Product> Products { get; set; }
         public DbSet<Entities.ProductGroup> Groups { get; set; }
+        public DbSet<Entities.Feedback> Feedbacks { get; set; }
 
         public DataContext(DbContextOptions options) : base(options)
         { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Entities.Feedback>()
+                .HasOne(f => f.Product)
+                .WithMany(p => p.Feedbacks);
+            modelBuilder.Entity<Entities.Feedback>()
+                .HasOne(f => f.User)
+                .WithMany();
+
             modelBuilder.Entity<Entities.User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();

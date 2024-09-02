@@ -13,5 +13,6 @@
         public String?   Slug        { get; set; }
 
         public ProductGroup Group { get; set; }
+        public IEnumerable<Feedback> Feedbacks { get; set; }
     }
 }

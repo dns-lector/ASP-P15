@@ -50,7 +50,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const profileDeleteButton = document.getElementById("profile-delete");
     if (profileDeleteButton) profileDeleteButton.addEventListener('click', profileDeleteClick);
+
+    const productFeedbackButton = document.getElementById("product-feedback-button");
+    if (productFeedbackButton) productFeedbackButton.addEventListener('click', productFeedbackClick);
 });
+
+function productFeedbackClick(e) {
+    const txtarea = document.getElementById("product-feedback");
+    const userId = txtarea.getAttribute("data-user-id");
+    const productId = txtarea.getAttribute("data-product-id");
+    var text = txtarea.value.trim();
+    fetch("/api/feedback", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            userId,
+            productId,
+            text
+        })
+    }).then(r => r.json()).then(console.log);
+
+    console.log(userId, productId, text);
+}
 
 function profileDeleteClick(e) {
     if (confirm("Підтверджуєте видалення облікового запису?")) {
