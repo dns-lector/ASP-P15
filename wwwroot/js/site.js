@@ -72,9 +72,16 @@ function productFeedbackClick(e) {
             text,
             rate
         })
-    }).then(r => r.json()).then(console.log);
+    }).then(r => r.json()).then(j => {
+        if (j.data === 'Created') {
+            window.location.reload();
+        }
+        else {
+            alert("Трапилась якась помилка");
+        }
+    });
 
-    console.log(userId, productId, text);
+    // console.log(userId, productId, text);
 }
 
 function profileDeleteClick(e) {

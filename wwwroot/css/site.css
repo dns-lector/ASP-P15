@@ -21,6 +21,27 @@ body {
   margin-bottom: 60px;
 }
 
+.product-feedback {
+    border: 1px solid lightgray;
+    margin: 10px;
+    padding: 10px;
+}
+    .product-feedback i {
+        font-size: small;
+    }
+    .product-feedback span {
+        color: gold;
+        font-size: large;
+    }
+    .product-feedback p {
+        margin: 0;
+        padding: 0;
+    }
+.my-product-feedback{
+    background-color: aliceblue;
+}
+
+
 .product-picture {
     width: 100%;
 }
