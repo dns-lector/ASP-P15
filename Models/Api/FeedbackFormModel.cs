@@ -5,5 +5,6 @@
         public Guid ProductId { get; set; }
         public Guid UserId { get; set; }
         public String Text { get; set; }
+        public int Rate { get; set; } = 5;
     }
 }

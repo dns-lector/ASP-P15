@@ -24,7 +24,10 @@
         @if(isAuthenticated)
         {
             <div class="row">
-                <b>Додати відгук:</b>
+                <b>Додати відгук:</b><br />
+                <input type="number" id="product-feedback-rate"
+                    value="5" min="1" max="5" />
+                <br/>
                 <textarea 
                     id="product-feedback"
                     data-user-id="@userId"

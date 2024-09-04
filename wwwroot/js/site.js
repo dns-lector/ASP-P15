@@ -59,6 +59,7 @@ function productFeedbackClick(e) {
     const txtarea = document.getElementById("product-feedback");
     const userId = txtarea.getAttribute("data-user-id");
     const productId = txtarea.getAttribute("data-product-id");
+    const rate = document.getElementById("product-feedback-rate").value;
     var text = txtarea.value.trim();
     fetch("/api/feedback", {
         method: 'POST',
@@ -68,7 +69,8 @@ function productFeedbackClick(e) {
         body: JSON.stringify({
             userId,
             productId,
-            text
+            text,
+            rate
         })
     }).then(r => r.json()).then(console.log);
 

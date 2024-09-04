@@ -36,6 +36,7 @@ namespace ASP_P15.Controllers
                 UserId = model.UserId,
                 ProductId = model.ProductId,
                 Text = model.Text,
+                Rate = model.Rate,
             });
             await _dataContext.SaveChangesAsync();
 
