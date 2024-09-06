@@ -53,7 +53,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const productFeedbackButton = document.getElementById("product-feedback-button");
     if (productFeedbackButton) productFeedbackButton.addEventListener('click', productFeedbackClick);
+
+    for (const btn of document.querySelectorAll('[data-role="feedback-edit"]')) {
+        btn.addEventListener('click', feedbackEditClick);
+    }
 });
+
+function feedbackEditClick(e) {
+    // feedbackId - беремо з кнопки, що натискається
+    const feedbackId = e.target.closest('[data-feedback-id]').getAttribute('data-feedback-id');
+    // за знайденим feedbackId шукаємо текст коментаря та його оцінку
+    let text = document
+        .querySelector(`[data-feedback-id="${feedbackId}"][data-role="feedback-text"]`)
+        .innerText;
+    let rate = document
+        .querySelector(`[data-feedback-id="${feedbackId}"][data-role="feedback-rate"]`)
+        .getAttribute('data-value');
+    // переносимо дані у блок редагування
+    document.getElementById("product-feedback-rate").value = rate;
+    document.getElementById("product-feedback").value = text;
+    document.getElementById("product-feedback-title").innerHTML = 
+        'Редагувати відгук: <button onclick="productFeedbackCancelEdit()" class="btn btn-danger"><i class="bi bi-x-lg"></i></button>';
+    // помічаємо "форму" - додаємо до кнопки додатковий атрибут
+    document.getElementById("product-feedback-button").setAttribute('data-edit-id', feedbackId);
+    // console.log('Edit click ' + rate + ' ' + text);
+}
+
+function productFeedbackCancelEdit() {
+    console.log("Edit cancelled");
+}
 
 function productFeedbackClick(e) {
     const txtarea = document.getElementById("product-feedback");
@@ -61,25 +89,49 @@ function productFeedbackClick(e) {
     const productId = txtarea.getAttribute("data-product-id");
     const rate = document.getElementById("product-feedback-rate").value;
     var text = txtarea.value.trim();
-    fetch("/api/feedback", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            userId,
-            productId,
-            text,
-            rate
-        })
-    }).then(r => r.json()).then(j => {
-        if (j.data === 'Created') {
-            window.location.reload();
-        }
-        else {
-            alert("Трапилась якась помилка");
-        }
-    });
+    const editId = e.target.closest('button').getAttribute('data-edit-id');
+    if (editId) {
+        fetch("/api/feedback", {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                editId,
+                text,
+                rate
+            })
+        }).then(r => r.json()).then(j => {
+            if (j.data === 'Updated') {
+                window.location.reload();
+            }
+            else {
+                alert("Трапилась якась помилка");
+            }
+        });
+    }
+    else {
+        fetch("/api/feedback", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId,
+                productId,
+                text,
+                rate
+            })
+        }).then(r => r.json()).then(j => {
+            if (j.data === 'Created') {
+                window.location.reload();
+            }
+            else {
+                alert("Трапилась якась помилка");
+            }
+        });
+    }
+    
 
     // console.log(userId, productId, text);
 }

@@ -25,26 +25,53 @@
             }
             else foreach(var feedback in Model.Product.Feedbacks)
             {
-                    String myClass = isAuthenticated && feedback.User?.Id.ToString() == userId
+                    bool isMine = isAuthenticated && feedback.User?.Id.ToString() == userId;
+                    String myClass = isMine
                     ? "my-product-feedback"
                     : String.Empty;
 
                 <div class="product-feedback @myClass">
                     <i>@DateTime.FromBinary(638610555513750564).ToShortDateString()</i>
                     <b>@(feedback.User?.Name ?? "Анонімно"):</b>
-                    <p>@(feedback.Text)</p>
-                        @for(int i = 0; i < feedback.Rate; ++i)
-                        {
-                            @* <span>✭</span> *@
-                            <span class="bi bi-star-fill"></span>
-                        }
+                    <p 
+                        data-feedback-id="@feedback.Id"
+                        data-role="feedback-text"
+                    >@(feedback.Text)</p>
+
+                    <div class="d-flex justify-content-between">
+                        <div 
+                            data-feedback-id="@feedback.Id" 
+                            data-role="feedback-rate"
+                            data-value="@feedback.Rate">
+                            @for(int i = 0; i < feedback.Rate; ++i)
+                            {
+                                @* <span>✭</span> *@
+                                <span class="bi bi-star-fill"></span>
+                            }
+                        </div>
+                            @if (isMine)
+                            {
+                                <div>
+                                    <button
+                                        class="btn btn-outline-warning"
+                                        data-feedback-id="@feedback.Id"
+                                        data-role="feedback-edit"
+                                    ><i class="bi bi-pencil-square"></i></button>
+                                    <button 
+                                        class="btn btn-outline-danger"
+                                        data-feedback-id="@feedback.Id"
+                                        data-role="feedback-delete"
+                                    ><i class="bi bi-x-square"></i></button>
+                                </div>
+                            }
+                        </div>
                 </div>
             }
         </div>
         @if(isAuthenticated)
         {
             <div class="row">
-                <b>Додати відгук:</b><br />
+                <b id="product-feedback-title">Додати відгук:</b><br />
                 <input type="number" id="product-feedback-rate"
                     value="5" min="1" max="5" />
                 <br/>
@@ -96,4 +123,14 @@
        або у підказці при наведенні)
 
     * реалізувати можливість редагування та видалення своїх коментарів
-*@
+
+Д.З. 
+- Реалізувати роботу кнопки скасування редагування відгуку
+- У бекенді (ShopController) реалізувати перевірки на надходження 
+потрібних даних. Оскільки у FeedbackFormModel всі ID є опціональними,
+кожен метод АРІ має забезпечити перевірку потрібних для себе параметрів
+POST: UserId, ProductId
+PUT: EditId
+У разі їх відсутності повертати RestResponse із відповідним текстом
+на кшталт "Відсутній необхідний параметр 'UserId'"
+*@    

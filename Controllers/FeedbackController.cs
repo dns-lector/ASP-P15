@@ -33,8 +33,8 @@ namespace ASP_P15.Controllers
         {
             _dataContext.Feedbacks.Add(new()
             {
-                UserId = model.UserId,
-                ProductId = model.ProductId,
+                UserId = model.UserId!.Value,
+                ProductId = model.ProductId!.Value,
                 Text = model.Text,
                 Rate = model.Rate,
             });
@@ -48,6 +48,33 @@ namespace ASP_P15.Controllers
                 },
                 Data = "Created",
             };
+        }
+
+        [HttpPut]
+        public async Task<RestResponse<String>> DoPut([FromBody] FeedbackFormModel model)
+        {
+            // готуємо відповідь
+            RestResponse<String> response = new()
+            {
+                Meta = new()
+                {
+                    Service = "Feedback",
+                },
+            };
+            // шукаємо відгук за editId
+            var feedback = _dataContext.Feedbacks.Find(model.EditId!.Value);
+            if(feedback == null)               // Якщо не знаходимо
+            {
+                response.Data = "Not Found";   // то повертаємо відповідне повідомлення
+            }
+            else                               // Якщо знаходимо
+            {
+                feedback.Text = model.Text;    // то вносимо відповідні зміни 
+                feedback.Rate = model.Rate;    // та зберігаємо
+                await _dataContext.SaveChangesAsync();
+                response.Data = "Updated";
+            }
+            return response;
         }
     }
 }
