@@ -76,12 +76,73 @@ namespace ASP_P15.Controllers
             }
             return response;
         }
+
+        [HttpDelete]
+        public async Task<RestResponse<String>> DoDelete([FromQuery] String id)
+        {
+            RestResponse<String> response = new()
+            {
+                Meta = new()
+                {
+                    Service = "Feedback",
+                },
+            };
+            if (String.IsNullOrEmpty(id))
+            {
+                response.Data = "Error 400: id parameter is null or empty";
+                return response;
+            }
+            Guid guid;
+            try { guid = Guid.Parse(id); }
+            catch 
+            {
+                response.Data = "Error 422: id parameter is not valid UUID";
+                return response;
+            }
+            var feedback = _dataContext.Feedbacks.Find(guid);
+            if(feedback == null)
+            {
+                response.Data = "Error 404: id parameter does not identify feedback";
+                return response;
+            }
+            if (feedback.DeleteDt != null)
+            {
+                response.Data = "Error 409: id parameter identifies already deleted feedback";
+                return response;
+            }
+            feedback.DeleteDt = DateTime.Now;
+            response.Data = "Deleted";
+            await _dataContext.SaveChangesAsync();
+            return response;
+        }
+
+        public async Task<RestResponse<String>> DoOther()
+        {
+            if(Request.Method == "RESTORE")
+            {
+                return await DoRestore();
+            }
+            throw new NotImplementedException();
+        }
+
+        private async Task<RestResponse<String>> DoRestore()
+        {
+            RestResponse<String> response = new()
+            {
+                Meta = new()
+                {
+                    Service = "Feedback"
+                }
+            };
+
+            return response;
+        }
     }
 }
-/* Д.З. Додати до відгуків (Feedback) мітку часу:
- * - розширити Entity
- * - зробити міграцію, застосувати її
- * - розшити форму прийому даних (FormModel)
- * - передати дані від JS
- * - переконатись у внесенні даних до БД
+/* Д.З. Додати до відгуків, які відображаються у профілі користувача
+ * - дату/час створення (* в інтелектуальній формі: якщо сьогодні, 
+ *     то відображати тільки час, якщо вчора, то так і писати "вчора",
+ *     для решти - N днів тому)
+ * - дату/час видалення - для видалених відгуків
+ * - рейтинг відгуку у вигляді "зірок"
  */

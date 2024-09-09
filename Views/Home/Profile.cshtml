@@ -1,4 +1,5 @@
 ﻿@using System.Security.Claims
+@model ASP_P15.Models.Home.ProfilePageModel
 @{
     ViewData["Title"] = "Profile";
     bool isAuthenticated = Context.User.Identity?.IsAuthenticated ?? false;
@@ -78,17 +79,84 @@
                                         <h6 class="text-muted f-w-400" profile-editable="birthdate">@birthdate</h6>
                                     </div>
                                 </div>
-                                <h6 class="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Projects</h6>
+
+                                <h6 class="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Відгуки</h6>
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <p class="m-b-10 f-w-600">Recent</p>
-                                        <h6 class="text-muted f-w-400">Sam Disuja</h6>
+                                        <p class="m-b-10 f-w-600">Нещодавні</p>
+                                        @if (Model.User.Feedbacks != null)
+                                        {
+                                            foreach (var feedback in Model.User.Feedbacks.Where(f => f.DeleteDt == null))
+                                            {
+                                                <div class="row">
+                                                    <div class="col col-3">
+                                                        <a asp-controller="Shop"
+                                                           asp-action="Product"
+                                                           asp-route-id="@feedback.Product!.Id">
+
+                                                            <img class="feedback-product-picture"
+                                                                 src="/Home/Download/Shop_@(feedback.Product!.Image)"
+                                                                 alt="Picture" />
+                                                        </a>
+                                                    </div>
+                                                    <div class="col col-9">
+                                                        <h6 class="text-muted f-w-400">
+                                                            @feedback.Rate <br />
+                                                            @feedback.Text
+                                                        </h6>
+                                                    </div>
+                                                </div>                                                
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <h6 class="text-muted f-w-400">
+                                                Відгуків поки що немає
+                                            </h6>
+                                        }
                                     </div>
                                     <div class="col-sm-6">
-                                        <p class="m-b-10 f-w-600">Most Viewed</p>
-                                        <h6 class="text-muted f-w-400">Dinoter husainm</h6>
+                                        <p class="m-b-10 f-w-600">Скасовані</p>
+                                        @if (Model.User.Feedbacks != null)
+                                        {
+                                            foreach (var feedback in Model.User.Feedbacks.Where(f => f.DeleteDt != null))
+                                            {
+                                                <div class="row">
+                                                    <div class="col col-3">
+                                                        <a asp-controller="Shop"
+                                                           asp-action="Product"
+                                                           asp-route-id="@feedback.Product!.Id">
+
+                                                            <img class="feedback-product-picture"
+                                                                 src="/Home/Download/Shop_@(feedback.Product!.Image)"
+                                                                 alt="Picture" />
+                                                        </a>
+                                                    </div>
+                                                    <div class="col col-8">
+                                                        <h6 class="text-muted f-w-400">
+                                                            @feedback.Rate <br />
+                                                            @feedback.Text
+                                                        </h6>
+                                                    </div>
+                                                    <div class="col col-1">
+                                                        <button 
+                                                            class="btn btn-outline-primary"
+                                                            data-feedback-id="@feedback.Id"
+                                                            data-role="feedback-restore"
+                                                        ><i class="bi bi-arrow-up-square"></i></button>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <h6 class="text-muted f-w-400">
+                                                Видалених відгуків немає
+                                            </h6>
+                                        }
                                     </div>
                                 </div>
+
                                 <ul class="social-link list-unstyled m-t-40 m-b-10">
                                     <li><a href="#!" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="facebook" data-abc="true"><i class="mdi mdi-facebook feather icon-facebook facebook" aria-hidden="true"></i></a></li>
                                     <li><a href="#!" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="twitter" data-abc="true"><i class="mdi mdi-twitter feather icon-twitter twitter" aria-hidden="true"></i></a></li>

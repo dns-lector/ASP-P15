@@ -6,7 +6,9 @@ using ASP_P15.Services.Hash;
 using ASP_P15.Services.Kdf;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -51,7 +53,20 @@ namespace ASP_P15.Controllers
             // if (HttpContext.User.Identity?.IsAuthenticated == true)
             if (HttpContext.User.Identity?.IsAuthenticated ?? false)
             {
-                return View();
+                String sid = HttpContext
+                    .User
+                    .Claims
+                    .First(c => c.Type == ClaimTypes.Sid)
+                    .Value;
+
+                return View(new ProfilePageModel()
+                {
+                    User = _dataContext
+                        .Users
+                        .Include(u => u.Feedbacks)
+                            .ThenInclude(f => f.Product)
+                        .First(u => u.Id.ToString() == sid),
+                });
             }
             return RedirectToAction(nameof(this.Index));
         }

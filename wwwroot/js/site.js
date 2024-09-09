@@ -57,7 +57,47 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const btn of document.querySelectorAll('[data-role="feedback-edit"]')) {
         btn.addEventListener('click', feedbackEditClick);
     }
+    for (const btn of document.querySelectorAll('[data-role="feedback-delete"]')) {
+        btn.addEventListener('click', feedbackDeleteClick);
+    }
+    for (const btn of document.querySelectorAll('[data-role="feedback-restore"]')) {
+        btn.addEventListener('click', feedbackRestoreClick);
+    }
 });
+
+function feedbackRestoreClick(e) {
+    const btn = e.target.closest('[data-feedback-id]');
+    const feedbackId = btn.getAttribute("data-feedback-id");
+    if (confirm("Дійсно бажаєте відновити відгук?")) {
+        fetch("/api/feedback?id=" + feedbackId, {
+            method: 'RESTORE'
+        }).then(r => r.json()).then(j => {
+            if (j.data === 'Restored') {
+                window.location.reload();
+            }
+            else {
+                alert("Трапилась якась помилка");
+            }
+        });
+    }
+}
+
+function feedbackDeleteClick(e) {
+    const btn = e.target.closest('[data-feedback-id]');
+    const feedbackId = btn.getAttribute("data-feedback-id");
+    if (confirm("Дійсно бажаєте видалити відгук?")) {
+        fetch("/api/feedback?id=" + feedbackId, {
+            method: 'DELETE'
+        }).then(r => r.json()).then(j => {
+            if (j.data === 'Deleted') {
+                window.location.reload();
+            }
+            else {
+                alert("Трапилась якась помилка");
+            }
+        });
+    }
+}
 
 function feedbackEditClick(e) {
     // feedbackId - беремо з кнопки, що натискається

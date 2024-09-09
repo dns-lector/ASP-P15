@@ -20,7 +20,7 @@ namespace ASP_P15.Data
                 .WithMany(p => p.Feedbacks);
             modelBuilder.Entity<Entities.Feedback>()
                 .HasOne(f => f.User)
-                .WithMany();
+                .WithMany(u => u.Feedbacks);
 
             modelBuilder.Entity<Entities.User>()
                 .HasIndex(u => u.Email)

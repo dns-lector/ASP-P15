@@ -57,7 +57,7 @@ namespace ASP_P15.Controllers
             var source = _dataContext
                 .Products
                 .Where(p => p.DeleteDt == null)
-                .Include(p => p.Feedbacks)
+                .Include(p => p.Feedbacks.Where(f => f.DeleteDt == null))                    
                     .ThenInclude(f => f.User)
                 .Include(p => p.Group)
                     .ThenInclude(g => g.Products);

@@ -13,5 +13,7 @@
         public String? Avatar   { get; set; } = null!;
         //////////////////// DELETE ///////////////////////////
         public DateTime? DeleteDt { get; set; }  // ознака видалення: null - активний, інакше - видалений
+
+        public IEnumerable<Feedback> Feedbacks { get; set; }
     }
 }
