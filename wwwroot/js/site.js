@@ -63,7 +63,33 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const btn of document.querySelectorAll('[data-role="feedback-restore"]')) {
         btn.addEventListener('click', feedbackRestoreClick);
     }
+    for (const btn of document.querySelectorAll('[data-role="add-to-cart"]')) {
+        btn.addEventListener('click', addToCartClick);
+    }
 });
+
+function addToCartClick(e) {
+    const btn = e.target.closest('[data-role="add-to-cart"]');
+    const userId = btn.getAttribute("data-user-id");
+    const productId = btn.getAttribute("data-product-id");
+    if (!userId) {
+        alert("Треба увійти до системи");
+        return;
+    }
+    fetch("/api/cart", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            userId,
+            productId,
+            cnt: 1
+        })
+    }).then(r => r.json()).then(console.log);
+
+    console.log(userId, productId);
+}
 
 function feedbackRestoreClick(e) {
     const btn = e.target.closest('[data-feedback-id]');

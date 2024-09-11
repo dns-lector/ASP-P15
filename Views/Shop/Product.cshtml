@@ -15,7 +15,12 @@
         <h1>@Model.Product.Name</h1>
         <p>@Model.Product.Description</p>
         <h2>₴ @Model.Product.Price.ToString("F2")</h2>
-        <button class="btn btn-outline-success"><i class="bi bi-cart3"></i> До кошику</button>
+        <button 
+            class="btn btn-outline-success"
+            data-product-id="@Model.Product.Id"
+            data-user-id="@userId"
+            data-role="add-to-cart"
+        ><i class="bi bi-cart3"></i> До кошику</button>
     
         <div class="row">
             <b>Відгуки про товар:</b>

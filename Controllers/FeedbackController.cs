@@ -134,7 +134,33 @@ namespace ASP_P15.Controllers
                     Service = "Feedback"
                 }
             };
-
+            String id = Request.Query["id"].ToString();
+            if (String.IsNullOrEmpty(id))
+            {
+                response.Data = "Error 400: id parameter is null or empty";
+                return response;
+            }
+            Guid guid;
+            try { guid = Guid.Parse(id); }
+            catch
+            {
+                response.Data = "Error 422: id parameter is not valid UUID";
+                return response;
+            }
+            var feedback = _dataContext.Feedbacks.Find(guid);
+            if (feedback == null)
+            {
+                response.Data = "Error 404: id parameter does not identify feedback";
+                return response;
+            }
+            if (feedback.DeleteDt == null)
+            {
+                response.Data = "Error 409: id parameter identifies not deleted feedback";
+                return response;
+            }
+            feedback.DeleteDt = null;
+            response.Data = "Restored";
+            await _dataContext.SaveChangesAsync();
             return response;
         }
     }

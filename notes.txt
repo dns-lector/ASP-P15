@@ -213,3 +213,11 @@ REST - Representation State Transfer
 - реалізація повного переліку дій "CRUD", причому для всіх запитів
     однакові ролі методів, наприклад, POST - завжди створює, а PUT - оновлює
 
+------------------------------------------------------------
+
+[User]   [Carts]		[CartProducts]
+Id __    Id		____    Id
+...  \__ UserId		\__ CartId
+         CreateDt	    ProductId
+         DeleteDt	    Cnt
+         CloseDt
