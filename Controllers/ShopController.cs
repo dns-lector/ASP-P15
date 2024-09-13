@@ -83,6 +83,11 @@ namespace ASP_P15.Controllers
 
             return View(model);
         }
+
+        public IActionResult Cart()
+        {
+            return View();
+        }
     }
 }
 

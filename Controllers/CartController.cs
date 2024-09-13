@@ -1,8 +1,10 @@
 ﻿using ASP_P15.Data;
+using ASP_P15.Data.Entities;
 using ASP_P15.Models.Api;
 using ASP_P15.Models.Cart;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ASP_P15.Controllers
 {
@@ -11,6 +13,27 @@ namespace ASP_P15.Controllers
     public class CartController(DataContext dataContext) : ControllerBase
     {
         private readonly DataContext _dataContext = dataContext;
+
+        [HttpGet]
+        public RestResponse<Cart?> DoGet([FromQuery] String id)
+        {
+            RestResponse<Cart?> response = new()
+            {
+                Meta = new()
+                {
+                    Service = "Cart",
+                },
+                Data = _dataContext
+                        .Carts
+                        .Include(c => c.CartProducts)
+                        .FirstOrDefault(c => 
+                            c.UserId.ToString() == id &&
+                            c.CloseDt == null &&
+                            c.DeleteDt == null)
+            };
+
+            return response;
+        }
 
         [HttpPost]
         public async Task<RestResponse<String>> DoPost(
@@ -93,6 +116,7 @@ namespace ASP_P15.Controllers
             response.Data = "Added";
             return response;
         }
+    
     }
 }
 /* Реалізувати виведення повідомлень щодо успішності додавання

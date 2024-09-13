@@ -43,6 +43,9 @@
                     </ul>
                     @if (isAuthenticated)
                     {
+                        <a asp-controller="Shop" asp-action="Cart" class="btn btn-outline-secondary mx-2 a-no-underline">
+                            <i class="bi bi-bag-plus"></i>
+                        </a>
                         <a asp-controller="Home" asp-action="Profile" class="a-no-underline">
                             @if (hasAvatar)
                             {
