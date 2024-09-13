@@ -20,6 +20,14 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.cart-product-item {
+    border: 1px solid lightgray;
+}
+.cart-product-item img {
+    width: 100%;
+}
+
 .feedback-product-picture {
     width: 50px;
 }

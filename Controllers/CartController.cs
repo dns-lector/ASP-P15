@@ -26,6 +26,7 @@ namespace ASP_P15.Controllers
                 Data = _dataContext
                         .Carts
                         .Include(c => c.CartProducts)
+                            .ThenInclude(cp => cp.Product)
                         .FirstOrDefault(c => 
                             c.UserId.ToString() == id &&
                             c.CloseDt == null &&
