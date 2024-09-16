@@ -117,7 +117,66 @@ namespace ASP_P15.Controllers
             response.Data = "Added";
             return response;
         }
-    
+
+        [HttpPut]
+        public async Task<RestResponse<String>> DoPut(
+            [FromQuery] Guid cpId, [FromQuery] int increment)
+        {
+            RestResponse<String> response = new()
+            {
+                Meta = new()
+                {
+                    Service = "Cart",
+                },
+            };
+            if (cpId == default)
+            {
+                response.Data = "Error 400: cpId is not valid";
+                return response;
+            }
+            if (increment == 0)
+            {
+                response.Data = "Error 400: increment is not valid";
+                return response;
+            }
+            var cp = _dataContext
+                .CartProducts
+                .Include(cp => cp.Cart)
+                .FirstOrDefault(cp => cp.Id == cpId);
+            if (cp == null)
+            {
+                response.Data = "Error 404: cpId does not identify entity";
+                return response;
+            }
+            if(cp.Cart.CloseDt is not null || cp.Cart.DeleteDt is not null)
+            {
+                response.Data = "Error 409: cpId identifies not active entity";
+                return response;
+            }
+            if(cp.Cnt + increment < 0)
+            {
+                response.Data = "Error 422: increment could not be applied";
+                return response;
+            }
+
+            if (cp.Cnt + increment == 0)
+            {
+                // віднімання усього -- видалення 
+                _dataContext.CartProducts.Remove(cp);
+                response.Meta.Count = 0;
+            }
+            else
+            {
+                // оновлення кількості
+                cp.Cnt += increment;
+                response.Meta.Count = cp.Cnt;
+            }
+            await _dataContext.SaveChangesAsync();
+            response.Data = "Updated";
+            return response;
+        }
+
+
     }
 }
 /* Реалізувати виведення повідомлень щодо успішності додавання
