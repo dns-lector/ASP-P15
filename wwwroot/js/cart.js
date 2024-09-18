@@ -12,16 +12,15 @@ function loadCart() {
     fetch("/api/cart?id=" + userId)
     .then(r => r.json())
     .then(j => {
-        let html = "";
+        let html = `<div class="row"><div class="col col-sm-12 col-lg-10 col-xl-8">`;
+        let totalCnt = 0;
         if (j.data == null || j.data.cartProducts == null || j.data.cartProducts.length == 0) {
             html = "Кошик порожній";
         }
         else {
             let total = 0;
-            let totalCnt = 0;
-            html = '<div class="row"><div class="col col-8">';
             for (let cartProduct of j.data.cartProducts) {
-                html += `<div class="row my-2 cart-product-item" data-cp-id="${cartProduct.id}">
+                html += `<div data-cart-id="${j.data.id}" class="row my-2 cart-product-item" data-cp-id="${cartProduct.id}">
                     <div class="col col-2">
                         <img src="/Home/Download/Shop_${cartProduct.product.image}" alt="Picture"/>
                     </div>
@@ -49,12 +48,44 @@ function loadCart() {
                     <b>Разом: <span data-role="cart-total">${total}</span> грн</b>
                 </div>`;
             }
-
-            html += '</div></div>';
         }
+        html += `<div class="d-flex justify-content-between">
+            <a href="/Shop" class="btn btn-info">До магазину</a>
+            ${totalCnt > 0 ? '<button onclick="buyClick()" class="btn btn-success">Придбати</button>' : ''}
+        </div>`;
+        html += '</div></div>';
+
         container.innerHTML = html;
     });
 }
+
+function buyClick() {
+    const block = document.querySelector("[data-cart-id]");
+    const cartId = block.getAttribute("data-cart-id");
+    const total = document.querySelector('[data-role="cart-total"]').innerText;
+    if (confirm("Підтверджуєте покупку на суму ₴ " + total)) {
+        console.log(cartId);
+        fetch("/api/cart?cartId=" + cartId, {
+            method: 'DELETE'
+        }).then(r => r.json()).then(j => {
+            console.log(j);
+            if (j.data == 'Deleted') {
+                loadCart();
+            }
+            else {
+                alert('Виникла помилка');
+            }
+        });
+    }
+}
+/*  [https://localhost/Shop/Cart]
+
+    href="api/cart"  --> https://localhost/Shop/api/cart
+    href="/api/cart"  --> https://localhost/api/cart
+    href="//api/cart"  --> https://api/cart
+    href="?x"  --> https://localhost/Shop/Cart?x
+    href="#x"  --> https://localhost/Shop/Cart#x
+*/
 
 function updateTotal() {
     let total = 0;
